@@ -32,6 +32,7 @@ $ peludna-prognoza --help
     -j, --json     Output data in JSON format                          [boolean]
     -x, --xml      Output data in XML format                           [boolean]
     -w, --web      Show data using web browser                         [boolean]
+    -h, --help     Show help                                           [boolean]
     -v, --version  Show version number                                 [boolean]
 
   Homepage:     https://github.com/vladimyr/peludna-prognoza
