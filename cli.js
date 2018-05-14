@@ -3,20 +3,23 @@
 'use strict';
 
 const { getCities, getPollenData } = require('./client');
-const { prompt } = require('inquirer');
 const { URL } = require('url');
 const argv = require('minimist')(process.argv.slice(2));
 const chalk = require('chalk');
 const flowers = require('./flowers');
+const fuzzysearch = require('fuzzysearch');
+const inquirer = require('inquirer');
 const Lines = require('./lines');
 const opn = require('opn');
 const pkg = require('./package.json');
 const print = require('./printer');
+inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'));
 
 const flag = (argv, short, long) => ({ [long]: (short && argv[short]) || argv[long] });
 const jsonify = obj => JSON.stringify(obj, null, 2);
 const normalize = str => removeDiacritics(str.toLowerCase().trim());
 const compare = (str1, str2) => normalize(str1) === normalize(str2);
+const search = (needle, haystack) => fuzzysearch(normalize(needle), normalize(haystack));
 
 const name = Object.keys(pkg.bin)[0];
 const help = chalk`
@@ -81,11 +84,15 @@ function getOptions(argv) {
 }
 
 async function selectCity(cities) {
-  const { city } = await prompt([{
-    type: 'list',
+  const { city } = await inquirer.prompt([{
+    type: 'autocomplete',
     name: 'city',
     message: 'Select city',
-    choices: cities
+    pageSize: 10,
+    source: async (_, input) => {
+      if (!input) return cities;
+      return cities.filter(({ name }) => search(input, name));
+    }
   }]);
   return city;
 }
