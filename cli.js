@@ -5,8 +5,10 @@
 const { getCities, getPollenData } = require('./client');
 const { prompt } = require('inquirer');
 const { URL } = require('url');
+const ansi = require('ansi2')(process.stdout);
 const argv = require('minimist')(process.argv.slice(2));
 const chalk = require('chalk');
+const flowers = require('./flowers');
 const opn = require('opn');
 const pkg = require('./package.json');
 const print = require('./printer');
@@ -47,7 +49,7 @@ async function program(options = getOptions(argv)) {
   } = options;
 
   if (showVersion) return console.log(pkg.version);
-  if (showHelp) return console.log(help);
+  if (showHelp) return outputHelp(help, flowers);
 
   const cities = await getCities();
   const city = options.city || await selectCity(cities);
@@ -85,6 +87,16 @@ async function selectCity(cities) {
     choices: cities
   }]);
   return city;
+}
+
+function outputHelp(help, logo, margin = 66) {
+  help.split('\n').forEach((line, row) => {
+    ansi.write(line);
+    const logoLine = logo[row];
+    if (!logoLine) return ansi.write('\n');
+    ansi.restartLine(margin).write(logoLine);
+    ansi.write('\n');
+  });
 }
 
 const replacements = [
