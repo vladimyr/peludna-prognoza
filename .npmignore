@@ -2,3 +2,5 @@
 .git*
 .eslint*
 .npmignore
+.travis.yml
+renovate.json
