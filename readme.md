@@ -6,19 +6,19 @@ This CLI fetches data from [Pliva's allergies data API](http://www.plivazdravlje
 
 ## Installation
 
-```bash    
+```    
 $ npm install -g peludna-prognoza
 ```
 
 Or for a one-time run:
 
-```bash    
+```    
 $ npx peludna-prognoza
 ```
 
 ## Usage
 
-```bash
+```
 $ peludna-prognoza --help
 
   peludna-prognoza v1.0.0
