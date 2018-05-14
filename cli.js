@@ -25,6 +25,7 @@ const help = chalk`
   Options:
     -c, --city     Select city                                         [string]
     -j, --json     Output data in JSON format                          [boolean]
+    -x, --xml      Output data in XML format                           [boolean]
     -h, --help     Show help                                           [boolean]
     -v, --version  Show version number                                 [boolean]
 
@@ -38,7 +39,8 @@ async function program(options = getOptions(argv)) {
   const {
     version: showVersion,
     help: showHelp,
-    json: outputJson
+    json: outputJson,
+    xml: outputXml
   } = options;
 
   if (showVersion) return console.log(pkg.version);
@@ -54,6 +56,7 @@ async function program(options = getOptions(argv)) {
   }
   const data = await getPollenData(url);
   if (outputJson) return console.log(jsonify(data, null, 2));
+  if (outputXml) return console.log(data.toXML());
   return print(data);
 }
 
@@ -61,6 +64,7 @@ function getOptions(argv) {
   const options = {
     ...flag(argv, 'c', 'city'),
     ...flag(argv, 'j', 'json'),
+    ...flag(argv, 'x', 'xml'),
     ...flag(argv, 'h', 'help'),
     ...flag(argv, 'v', 'version')
   };

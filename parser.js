@@ -7,6 +7,14 @@ const isDetailed = entries => entries.every(node => node.tag === 'plant');
 const pascalCase = str => str[0].toUpperCase() + str.substring(1).toLowerCase();
 const withLabel = (obj, label) => Object.assign(obj, { label });
 const withReferences = obj => Object.assign(obj, { refs: getReferences(obj) });
+const withXmlWritter = (obj, xmltree, attr = {}) => Object.assign(obj, {
+  toXML(options = {}) {
+    options.indent = options.indent || 2;
+    const rootNode = xmltree.getroot();
+    Object.keys(attr).forEach(key => rootNode.set(key, attr[key]));
+    return xmltree.write(options);
+  }
+});
 
 const Level = {
   High: Symbol('high'),
@@ -37,7 +45,7 @@ function parseCities(xml) {
     name: node.findtext('./name'),
     url: node.findtext('./link')
   }));
-  return cities;
+  return withXmlWritter(cities, xmltree);
 }
 
 function parsePollenData(xml) {
@@ -49,14 +57,16 @@ function parsePollenData(xml) {
       name: node.findtext('./name'),
       records: parseDaily(node.find('./daily'))
     }));
-    return withReferences({ type: Type.Detailed, data });
+    const result = { type: Type.Detailed, data };
+    return withXmlWritter(withReferences(result), xmltree, { type: result.type });
   }
 
   const tree = withLabel(parseCategory(xmltree.find('./tree')), 'Drveće');
   const grass = withLabel(parseCategory(xmltree.find('./grass')), 'Trava');
   const weed = withLabel(parseCategory(xmltree.find('./weed')), 'Korovi');
   const data = { tree, weed, grass };
-  return withReferences({ type: Type.Combined, data });
+  const result = { type: Type.Combined, data };
+  return withXmlWritter(withReferences(result), xmltree, { type: Type.Combined });
 }
 
 function parseCategory(category) {
