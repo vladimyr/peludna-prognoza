@@ -20,21 +20,21 @@ $ npx peludna-prognoza
 
 ```
 $ peludna-prognoza --help
-                                                                  _,-._
-  peludna-prognoza v1.0.0                                        / \_/ \  _,-._
-                                                                 >-(_)-< / \_/ \
-  Usage:                                                         \_/ \_/ >-(_)-<
-    $ peludna-prognoza [city]                                      `-'   \_/ \_/
-    $ peludna-prognoza -c <city>                                           `-'
+                                                                _,-._
+peludna-prognoza v1.0.0                                        / \_/ \  _,-._
+                                                               >-(_)-< / \_/ \
+Usage:                                                         \_/ \_/ >-(_)-<
+  $ peludna-prognoza [city]                                      `-'   \_/ \_/
+  $ peludna-prognoza -c <city>                                           `-'
 
-  Options:
-    -c, --city     Select city                                         [string]
-    -j, --json     Output data in JSON format                          [boolean]
-    -x, --xml      Output data in XML format                           [boolean]
-    -w, --web      Show data using web browser                         [boolean]
-    -h, --help     Show help                                           [boolean]
-    -v, --version  Show version number                                 [boolean]
+Options:
+  -c, --city     Select city                                         [string]
+  -j, --json     Output data in JSON format                          [boolean]
+  -x, --xml      Output data in XML format                           [boolean]
+  -w, --web      Show data using web browser                         [boolean]
+  -h, --help     Show help                                           [boolean]
+  -v, --version  Show version number                                 [boolean]
 
-  Homepage:     https://github.com/vladimyr/peludna-prognoza
-  Report issue: https://github.com/vladimyr/peludna-prognoza/issues
+Homepage:     https://github.com/vladimyr/peludna-prognoza
+Report issue: https://github.com/vladimyr/peludna-prognoza/issues
 ```
