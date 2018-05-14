@@ -1,0 +1,50 @@
+{
+  "name": "peludna-prognoza",
+  "version": "0.0.0",
+  "description": "Fetch pollen measurement data for Croatian cities from your terminal",
+  "main": "client.js",
+  "bin": {
+    "peludna-prognoza": "cli.js"
+  },
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "keywords": [
+    "pelud",
+    "prognoza",
+    "pollen",
+    "cli"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/vladimyr/peludna-prognoza.git"
+  },
+  "author": {
+    "email": "d.vladimyr@gmail.com",
+    "name": "Dario Vladovic",
+    "url": "github.com/vladimyr"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vladimyr/peludna-prognoza/issues"
+  },
+  "homepage": "https://github.com/vladimyr/peludna-prognoza",
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "cli-table": "^0.3.1",
+    "elementtree": "^0.1.7",
+    "got": "^8.3.1",
+    "inquirer": "^5.2.0",
+    "minimist": "^1.2.0",
+    "url-join": "^4.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-semistandard": "^12.0.1",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.7.0",
+    "eslint-plugin-standard": "^3.0.1"
+  }
+}
