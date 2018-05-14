@@ -31,6 +31,7 @@ $ peludna-prognoza --help
     -c, --city     Select city                                         [string]
     -j, --json     Output data in JSON format                          [boolean]
     -j, --xml      Output data in XML format                           [boolean]
+    -w, --web      Show data using web browser                         [boolean]
     -h, --help     Show help                                           [boolean]
     -v, --version  Show version number                                 [boolean]
 

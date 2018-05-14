@@ -4,17 +4,19 @@
 
 const { getCities, getPollenData } = require('./client');
 const { prompt } = require('inquirer');
+const { URL } = require('url');
 const argv = require('minimist')(process.argv.slice(2));
 const chalk = require('chalk');
-const name = require('path').basename(process.argv[1]);
+const opn = require('opn');
 const pkg = require('./package.json');
 const print = require('./printer');
 
-const flag = (argv, short, long) => ({ [long]: argv[short] || argv[long] });
+const flag = (argv, short, long) => ({ [long]: (short && argv[short]) || argv[long] });
 const jsonify = obj => JSON.stringify(obj, null, 2);
 const normalize = str => removeDiacritics(str.toLowerCase().trim());
 const compare = (str1, str2) => normalize(str1) === normalize(str2);
 
+const name = Object.keys(pkg.bin)[0];
 const help = chalk`
   {bold ${name}} v${pkg.version}
 
@@ -26,7 +28,7 @@ const help = chalk`
     -c, --city     Select city                                         [string]
     -j, --json     Output data in JSON format                          [boolean]
     -x, --xml      Output data in XML format                           [boolean]
-    -h, --help     Show help                                           [boolean]
+    -w, --web      Show data using web browser                         [boolean]
     -v, --version  Show version number                                 [boolean]
 
   Homepage:     {green https://github.com/vladimyr/peludna-prognoza}
@@ -39,6 +41,7 @@ async function program(options = getOptions(argv)) {
   const {
     version: showVersion,
     help: showHelp,
+    web: openBrowser,
     json: outputJson,
     xml: outputXml
   } = options;
@@ -54,6 +57,7 @@ async function program(options = getOptions(argv)) {
     console.error(chalk`{bgRed.whiteBright Error} ${msg}`);
     process.exit();
   }
+  if (openBrowser) return opn(webpage(url));
   const data = await getPollenData(url);
   if (outputJson) return console.log(jsonify(data, null, 2));
   if (outputXml) return console.log(data.toXML());
@@ -65,6 +69,7 @@ function getOptions(argv) {
     ...flag(argv, 'c', 'city'),
     ...flag(argv, 'j', 'json'),
     ...flag(argv, 'x', 'xml'),
+    ...flag(argv, 'w', 'web'),
     ...flag(argv, 'h', 'help'),
     ...flag(argv, 'v', 'version')
   };
@@ -95,4 +100,10 @@ function removeDiacritics(str) {
     acc = acc.replace(pattern, replacement);
     return acc;
   }, str);
+}
+
+function webpage(url) {
+  const urlObj = new URL(url);
+  urlObj.search = '';
+  return urlObj.href;
 }
