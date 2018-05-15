@@ -61,7 +61,7 @@ async function program(options = getOptions(argv)) {
   if (!url) {
     const msg = chalk`Odabrani grad nije pronadjen: {blue ${city}}`;
     console.error(chalk`{bgRed.whiteBright Error} ${msg}`);
-    process.exit();
+    process.exit(1);
   }
   if (openBrowser) return opn(webpage(url));
   const data = await getPollenData(url);
