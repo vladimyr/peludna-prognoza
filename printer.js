@@ -1,5 +1,6 @@
 'use strict';
 
+const { bullet, pointerSmall } = require('figures');
 const { Level, Type } = require('./parser');
 const chalk = require('chalk');
 const Table = require('cli-table');
@@ -23,8 +24,11 @@ module.exports = function print({ type, data }) {
 
 function printCombined({ tree, grass, weed }) {
   printTable(tree);
+  printPrevalent(tree);
   printTable(grass);
+  printPrevalent(grass);
   printTable(weed);
+  printPrevalent(weed);
 }
 
 function printTable({ label, name, records }) {
@@ -40,8 +44,15 @@ function printTable({ label, name, records }) {
   console.log(table.toString());
 }
 
+function printPrevalent({ prevalent }) {
+  if (prevalent.length <= 0) return console.log();
+  console.log('', chalk.underline('Prevladava pelud:'));
+  prevalent.forEach(({ name }) => console.log('', pointerSmall, name));
+  console.log();
+}
+
 function formatLevel(level, value) {
-  let str = '● ';
+  let str = bullet + ' ';
   str += level.label;
   if (value) str += ` (${value})`;
   const format = formatter[level.value];
