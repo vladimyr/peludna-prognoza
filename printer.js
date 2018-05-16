@@ -11,6 +11,7 @@ const formatter = {
   [Level.Low]: chalk.green.bold
 };
 
+const columns = (col, def) => col.length > 0 ? col : def;
 const formatDate = date => {
   const [, m, d] = date.split('-');
   return `${d}.${m}.`;
@@ -33,13 +34,13 @@ function printCombined({ tree, grass, weed }) {
 
 function printTable({ label, name, records }) {
   const title = label || name;
-  const head = [chalk.bold.blue(title), ...times(records.length, () => '')];
+  const head = [chalk.bold.blue(title), ...times(Math.max(records.length, 1), () => '')];
   const dates = records.map(it => formatDate(it.date));
   const values = records.map(it => formatLevel(it.level, it.value));
   const table = new Table({ head });
   table.push(
-    { [chalk.reset('Datum')]: dates },
-    { [chalk.reset('Koncentracija')]: values }
+    { [chalk.reset('Datum')]: columns(dates, '') },
+    { [chalk.reset('Koncentracija')]: columns(values, chalk.magenta('nema podataka')) }
   );
   console.log(table.toString());
 }
