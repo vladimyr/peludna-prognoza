@@ -79,7 +79,7 @@ function getOptions(argv) {
     ...flag(argv, 'h', 'help'),
     ...flag(argv, 'v', 'version')
   };
-  options.city = options.city || argv._[0];
+  options.city = options.city || argv._.join(' ');
   return options;
 }
 
