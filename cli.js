@@ -21,7 +21,6 @@ const jsonify = obj => JSON.stringify(obj, null, 2);
 const removeDiacritics = str => diacritics.remove(str.replace(/đ/g, 'dj'));
 const normalize = str => removeDiacritics(str.toLowerCase().trim());
 const compare = (str1, str2) => normalize(str1) === normalize(str2);
-const search = (needle, haystack) => fuzzysearch(normalize(needle), normalize(haystack));
 
 const name = Object.keys(pkg.bin)[0];
 const help = chalk`
@@ -58,10 +57,12 @@ async function program(options = getOptions(argv)) {
   if (showHelp) return outputHelp(help, flowers);
 
   const cities = await getCities();
-  const city = options.city || await selectCity(cities);
-  const { url } = cities.find(({ name }) => compare(name, city)) || {};
+  const city = options.city ? { name: options.city } : await selectCity(cities);
+  let url;
+  if (city.url) ({ url } = city);
+  else ({ url } = cities.find(({ name }) => compare(name, city.name)) || {});
   if (!url) {
-    const msg = chalk`Odabrani grad nije pronadjen: {blue ${city}}`;
+    const msg = chalk`Odabrani grad nije pronadjen: {blue ${city.name}}`;
     console.error(chalk`{bgRed.whiteBright Error} ${msg}`);
     process.exit(1);
   }
@@ -86,6 +87,11 @@ function getOptions(argv) {
 }
 
 async function selectCity(cities) {
+  cities = cities.map(city => {
+    city.value = city;
+    city.normalizedName = normalize(city.name);
+    return city;
+  });
   const { city } = await inquirer.prompt([{
     type: 'autocomplete',
     name: 'city',
@@ -93,7 +99,8 @@ async function selectCity(cities) {
     pageSize: 10,
     source: async (_, input) => {
       if (!input) return cities;
-      return cities.filter(({ name }) => search(input, name));
+      const needle = normalize(input);
+      return cities.filter(city => fuzzysearch(needle, city.normalizedName));
     }
   }]);
   return city;
