@@ -6,6 +6,7 @@ const { getCities, getPollenData } = require('./client');
 const { URL } = require('url');
 const argv = require('minimist')(process.argv.slice(2));
 const chalk = require('chalk');
+const diacritics = require('diacritics');
 const flowers = require('./flowers');
 const fuzzysearch = require('fuzzysearch');
 const inquirer = require('inquirer');
@@ -17,6 +18,7 @@ inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'))
 
 const flag = (argv, short, long) => ({ [long]: (short && argv[short]) || argv[long] });
 const jsonify = obj => JSON.stringify(obj, null, 2);
+const removeDiacritics = str => diacritics.remove(str.replace(/đ/g, 'dj'));
 const normalize = str => removeDiacritics(str.toLowerCase().trim());
 const compare = (str1, str2) => normalize(str1) === normalize(str2);
 const search = (needle, haystack) => fuzzysearch(normalize(needle), normalize(haystack));
@@ -37,8 +39,8 @@ const help = chalk`
     -h, --help     Show help                                           [boolean]
     -v, --version  Show version number                                 [boolean]
 
-  Homepage:     {green https://github.com/vladimyr/peludna-prognoza}
-  Report issue: {green https://github.com/vladimyr/peludna-prognoza/issues}
+  Homepage:     {green ${pkg.homepage}}
+  Report issue: {green ${pkg.bugs.url}}
 `;
 
 program().catch(err => { throw err; });
@@ -107,21 +109,6 @@ function outputHelp(help, logo, margin = 66) {
     output.next();
   });
   console.log(output.toString());
-}
-
-const replacements = [
-  [/[čć]/g, 'c'],
-  [/dž/g, 'dz'],
-  [/đ/g, 'dj'],
-  [/š/g, 's'],
-  [/ž/g, 'z']
-];
-
-function removeDiacritics(str) {
-  return replacements.reduce((acc, [pattern, replacement]) => {
-    acc = acc.replace(pattern, replacement);
-    return acc;
-  }, str);
 }
 
 function webpage(url) {
