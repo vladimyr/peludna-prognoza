@@ -4,7 +4,6 @@
 
 const { getCities, getPollenData } = require('./client');
 const { URL } = require('url');
-const argv = require('minimist')(process.argv.slice(2));
 const chalk = require('chalk');
 const diacritics = require('diacritics');
 const flowers = require('./flowers');
@@ -16,11 +15,11 @@ const pkg = require('./package.json');
 const print = require('./printer');
 inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'));
 
-const flag = (argv, short, long) => ({ [long]: (short && argv[short]) || argv[long] });
 const jsonify = obj => JSON.stringify(obj, null, 2);
 const removeDiacritics = str => diacritics.remove(str.replace(/đ/g, 'dj'));
 const normalize = str => removeDiacritics(str.toLowerCase().trim());
 const compare = (str1, str2) => normalize(str1) === normalize(str2);
+const openUrl = url => opn(url, { wait: false });
 
 const name = Object.keys(pkg.bin)[0];
 const help = chalk`
@@ -42,22 +41,24 @@ const help = chalk`
   Report issue: {green ${pkg.bugs.url}}
 `;
 
-program().catch(err => { throw err; });
+const options = require('minimist-options')({
+  help: { type: 'boolean', alias: 'h' },
+  version: { type: 'boolean', alias: 'v' },
+  city: { type: 'string', alias: 'c' },
+  json: { type: 'boolean', alias: 'j' },
+  xml: { type: 'boolean', alias: 'x' },
+  web: { type: 'boolean', alias: 'w' }
+});
+const argv = require('minimist')(process.argv.slice(2), options);
 
-async function program(options = getOptions(argv)) {
-  const {
-    version: showVersion,
-    help: showHelp,
-    web: openBrowser,
-    json: outputJson,
-    xml: outputXml
-  } = options;
+program(argv).catch(err => { throw err; });
 
-  if (showVersion) return console.log(pkg.version);
-  if (showHelp) return outputHelp(help, flowers);
+async function program(flags) {
+  if (flags.version) return console.log(pkg.version);
+  if (flags.help) return outputHelp(help, flowers);
 
   const cities = await getCities();
-  const city = options.city ? { name: options.city } : await selectCity(cities);
+  const city = flags.city ? { name: flags.city } : await selectCity(cities);
   let url;
   if (city.url) ({ url } = city);
   else ({ url } = cities.find(({ name }) => compare(name, city.name)) || {});
@@ -66,24 +67,11 @@ async function program(options = getOptions(argv)) {
     console.error(chalk`{bgRed.whiteBright Error} ${msg}`);
     process.exit(1);
   }
-  if (openBrowser) return opn(webpage(url));
+  if (flags.web) return openUrl(webpage(url));
   const data = await getPollenData(url);
-  if (outputJson) return console.log(jsonify(data, null, 2));
-  if (outputXml) return console.log(data.toXML());
+  if (flags.json) return console.log(jsonify(data, null, 2));
+  if (flags.xml) return console.log(data.toXML());
   return print(data);
-}
-
-function getOptions(argv) {
-  const options = {
-    ...flag(argv, 'c', 'city'),
-    ...flag(argv, 'j', 'json'),
-    ...flag(argv, 'x', 'xml'),
-    ...flag(argv, 'w', 'web'),
-    ...flag(argv, 'h', 'help'),
-    ...flag(argv, 'v', 'version')
-  };
-  options.city = options.city || argv._.join(' ');
-  return options;
 }
 
 async function selectCity(cities) {

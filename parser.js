@@ -12,7 +12,7 @@ const withXmlWritter = (obj, xmltree, attr = {}) => Object.assign(obj, {
     options.indent = options.indent || 2;
     const rootNode = xmltree.getroot();
     Object.keys(attr).forEach(key => rootNode.set(key, attr[key]));
-    return xmltree.write(options);
+    return xmltree.write(options).trim();
   }
 });
 
