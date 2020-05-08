@@ -46,7 +46,7 @@
     "url-join": "^4.0.0"
   },
   "devDependencies": {
-    "eslint": "^6.0.0",
+    "eslint": "^7.0.0",
     "eslint-config-semistandard": "^15.0.0",
     "eslint-config-standard": "^14.0.0",
     "eslint-plugin-import": "^2.9.0",
