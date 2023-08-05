@@ -37,7 +37,7 @@
     "figures": "^3.0.0",
     "fuzzysearch": "^1.0.3",
     "got": "^9.0.0",
-    "inquirer": "^7.0.0",
+    "inquirer": "^9.0.0",
     "inquirer-autocomplete-prompt": "^1.0.0",
     "minimist": "^1.2.0",
     "minimist-options": "^4.0.0",
